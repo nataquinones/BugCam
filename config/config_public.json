@@ -1,0 +1,10 @@
+{
+    "url":"insert_url_here",
+    "time":1,
+    "private_tokens":{
+        "dropbox": "insert_token_here",
+        "slack_bot": "insert_token_here"}, 
+    "brightness_threshold":{
+        "light": 10,
+        "dark": -10}
+}
