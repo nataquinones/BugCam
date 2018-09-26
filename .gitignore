@@ -1,0 +1,16 @@
+# os and editor
+.DS_Store
+Thumbs.db
+.cache
+.project
+.ipyn_checkpoints/*
+*.sublime-project
+*.sublime-workspace
+
+# python
+*.py[cod]
+
+# project-specific
+_previous/
+test_data/
+config/config.json
