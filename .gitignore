@@ -6,6 +6,7 @@ Thumbs.db
 .ipynb_checkpoints/*
 *.sublime-project
 *.sublime-workspace
+venv/*
 
 # python
 *.py[cod]
