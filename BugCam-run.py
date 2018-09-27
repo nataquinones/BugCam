@@ -1,8 +1,8 @@
 # python3
 '''
-BactCam-0.1.py
+BugCam-run.py
 
-BactCam monitors timelapse photography experiments.
+BugCam monitors timelapse photography experiments.
 It checks a Dropbox folder's pictures, and sends Slack messages if it
 finds problems:
 - No new picture in specified time period.
@@ -284,7 +284,7 @@ if __name__ == '__main__':
     scheduler.add_job(main, 'interval', minutes=arguments.time)
     scheduler.start()
     print('# -----------------------------------------------------------')
-    print('# BactCam Daemon')
+    print('# BugCam Daemon')
     print('# -----------------------------------------------------------')
     print('# Project: {0}'.format(NAME))
     print('# Monitoring folder: {0}, every {1} minutes.'.format(FOLDER_INFO.name,

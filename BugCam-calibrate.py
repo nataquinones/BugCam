@@ -1,9 +1,9 @@
 # python3
 '''
-BactCam-calibrate-0.1.py
+BugCam-calibrate.py (BETA)
 
-BactCam-calibrate assists with the computing of light and dark
-thresholds for BactCam.
+BugCam-calibrate assists with the computing of light and dark
+thresholds for BugCam.
 '''
 
 from PIL import Image, ImageStat, ExifTags
