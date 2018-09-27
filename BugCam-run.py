@@ -7,6 +7,11 @@ It checks a Dropbox folder's pictures, and sends Slack messages if it
 finds problems:
 - No new picture in specified time period.
 - Significantly different brightness from one picture to the next.
+
+TO_DO
+- Add apscheduler listener: https://apscheduler.readthedocs.io/en/latest/userguide.html#missed-job-executions-and-coalescing
+- Add support to read link and time from config file
+- Add browser-based(?) GUI, that displays current image and log.
 '''
 
 import argparse
@@ -216,7 +221,8 @@ def checks_response():
         # slack response
         SLACK_CLIENT.api_call("chat.postMessage",
                               channel="monitor_test",
-                              text=":warning:\t*{name}*: New photo missing\t{time}".format(name=NAME, time=current_time))
+                              text=":warning:\t*{name}*: New photo missing\t{time}".format(name=NAME,
+                                                                                           time=current_time))
 
     # BRIGHTNESS CHECK
     elif NEWPHOTO_STATUS is 'present':
@@ -230,7 +236,8 @@ def checks_response():
             # slack response
             SLACK_CLIENT.api_call("chat.postMessage",
                               channel="monitor_test",
-                              text=":warning:\t*{name}*:\tBrightness decrease\t{time}".format(name=NAME, time=current_time))
+                              text=":warning:\t*{name}*:\tBrightness decrease\t{time}".format(name=NAME,
+                                                                                              time=current_time))
 
         # increase in brightness
         elif BRIGHTNESS_STATUS is 'increase':
@@ -241,7 +248,8 @@ def checks_response():
             # slack response
             SLACK_CLIENT.api_call("chat.postMessage",
                               channel="monitor_test",
-                              text=":warning:\t*{name}(:\tBrightness increase\t{time}".format(name=NAME, time=current_time))
+                              text=":warning:\t*{name}*:\tBrightness increase\t{time}".format(name=NAME,
+                                                                                              time=current_time))
 
         # stable brightness
         elif BRIGHTNESS_STATUS is 'stable':
@@ -283,6 +291,7 @@ if __name__ == '__main__':
     scheduler = BackgroundScheduler(daemon=False)
     scheduler.add_job(main, 'interval', minutes=arguments.time)
     scheduler.start()
+
     print('# -----------------------------------------------------------')
     print('# BugCam Daemon')
     print('# -----------------------------------------------------------')
@@ -293,6 +302,11 @@ if __name__ == '__main__':
     print('# (Press Ctrl+{0} to exit)'.format('Break' if os.name == 'nt' else 'C'))
     print('#')
 
+    SLACK_CLIENT.api_call("chat.postMessage",
+                              channel="monitor_test",
+                              text="*BugCam START:* {name}\t{time}".format(name=NAME,
+                                                                             time=datetime.now().isoformat(' ', 'seconds')))
+
     try:
         # This is here to simulate application activity (which keeps the main thread alive).
         while True:
@@ -302,4 +316,9 @@ if __name__ == '__main__':
         print('#')
         print('# Stopped at {0}'.format(datetime.now()))
         print('# -----------------------------------------------------------')
+
+        SLACK_CLIENT.api_call("chat.postMessage",
+                              channel="monitor_test",
+                              text="*BugCam STOP:* {name}\t{time}".format(name=NAME,
+                                                                             time=datetime.now().isoformat(' ', 'seconds')))
         scheduler.shutdown()
