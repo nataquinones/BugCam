@@ -56,6 +56,10 @@ def main_argparser():
                                 (Should be the time interval of timelapse.)''',
                         type=int)
 
+    parser.add_argument('name',
+                        metavar='<name>',
+                        help='''Name of the project being monitored.''')
+
     parser.add_argument('-c', '--config',
                         metavar='<json>',
                         help='''Path for .json config file. If not specified,
@@ -212,7 +216,7 @@ def checks_response():
         # slack response
         SLACK_CLIENT.api_call("chat.postMessage",
                               channel="monitor_test",
-                              text=":warning:\t*New photo missing*\t{0}".format(current_time))
+                              text=":warning:\t*{name}*: New photo missing\t{time}".format(name=NAME, time=current_time))
 
     # BRIGHTNESS CHECK
     elif NEWPHOTO_STATUS is 'present':
@@ -220,23 +224,31 @@ def checks_response():
         # decrease in brightness
         if BRIGHTNESS_STATUS is 'decrease':
             # local response
-            print(colors.red('{note:<10}').format(note='WARNING!') +
-                  '{desc:<25}{time}'.format(desc='Brightness decrease.',
-                                            time=current_time))
+            print('{note} {desc: <25} {time}'.format(note=colors.red('WARNING!'),
+                                                     desc='Brightness decrease.',
+                                                     time=current_time))
+            # slack response
+            SLACK_CLIENT.api_call("chat.postMessage",
+                              channel="monitor_test",
+                              text=":warning:\t*{name}*:\tBrightness decrease\t{time}".format(name=NAME, time=current_time))
 
         # increase in brightness
         elif BRIGHTNESS_STATUS is 'increase':
             # local response
-            print(colors.red('{note:<10}').format(note='WARNING!') +
-                             '{desc:<25}{time}'.format(desc='Brightness increase.',
-                                                       time=current_time))
+            print('{note} {desc: <25} {time}'.format(note=colors.red('WARNING!'),
+                                                     desc='Brightness increase.',
+                                                     time=current_time))
+            # slack response
+            SLACK_CLIENT.api_call("chat.postMessage",
+                              channel="monitor_test",
+                              text=":warning:\t*{name}(:\tBrightness increase\t{time}".format(name=NAME, time=current_time))
 
         # stable brightness
         elif BRIGHTNESS_STATUS is 'stable':
             # local response
-            print('{note:<10}'.format(note='ok') +
-                  '{desc:<25}{time}'.format(desc='',
-                                            time=current_time))
+            print('{note} {desc: <25} {time}'.format(note='ok',
+                                                     desc='',
+                                                     time=current_time))
 
 # .................................main............................................
 
@@ -266,13 +278,16 @@ if __name__ == '__main__':
 
     FOLDER_INFO = init(arguments)
 
+    NAME = arguments.name
+
     scheduler = BackgroundScheduler(daemon=False)
     scheduler.add_job(main, 'interval', minutes=arguments.time)
     scheduler.start()
     print('# -----------------------------------------------------------')
     print('# BactCam Daemon')
     print('# -----------------------------------------------------------')
-    print('# Monitoring: {0}, every {1} minutes.'.format(FOLDER_INFO.name,
+    print('# Project: {0}'.format(NAME))
+    print('# Monitoring folder: {0}, every {1} minutes.'.format(FOLDER_INFO.name,
                                                          arguments.time))
     print('# Started at: {0}'.format(datetime.now().isoformat(' ', 'seconds')))
     print('# (Press Ctrl+{0} to exit)'.format('Break' if os.name == 'nt' else 'C'))
