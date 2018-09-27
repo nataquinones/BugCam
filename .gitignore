@@ -15,3 +15,4 @@ venv/*
 _previous/
 test_data/
 config/config.json
+howto.txt
