@@ -1,2 +1,2 @@
-# BactCam
-BactCam monitors timelapse photography experiments.
+# BugCam
+BugCam monitors timelapse photography experiments.
